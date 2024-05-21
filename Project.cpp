@@ -2,7 +2,17 @@
 using namespace std;
 
 
+struct Barang{
+  int id;
+  string nama;
+  int stok;
+  Barang *next;
+  Barang *prev;
+};
+
+
+
+
 int main(){
-  cout << "Hello World!" << endl;
   return 0;
 }
