@@ -16,7 +16,6 @@ struct Item
   string name;
   int stock;
 };
-Item *del;
 
 struct TreeNode
 {
@@ -31,6 +30,18 @@ struct CategoryNode
   TreeNode *itemsTree;
   CategoryNode *next;
 };
+struct Orderan
+{
+  int IDorder;
+  int jmlhOrderProduk;
+  string name;
+  string orderProduk;
+  Orderan *next;
+};
+
+Orderan *head, *tail, *cur, *newNode, *del;
+
+int maksimalOrder = 2;
 
 CategoryNode *categories = nullptr;
 
@@ -148,7 +159,6 @@ void showCategoryItems(string category)
   }
 }
 
-
 void listCategories()
 {
   int i = 1;
@@ -210,11 +220,92 @@ void editDataBarang(int id)
     cout << "Barang dengan ID " << id << " tidak ditemukan." << endl;
   }
 }
+int countOrder()
+{
+  if (head == nullptr)
+  {
+    return 0;
+  }
+  else
+  {
+    int count = 0;
+    cur = head;
+    while (cur != nullptr)
+    {
+      cur = cur->next;
+      count++;
+    }
+    return count;
+  }
+}
+bool isFullOrder()
+{
+  if (countOrder() == maksimalOrder)
+  {
+    return true;
+  }
+  return false;
+}
+bool isEmptyOrder()
+{
+  if (countOrder() == 0)
+  {
+    return true;
+  }
+  return false;
+}
+// implementasi queue
+void insertOrderan(string namaPemesan, string namaProduk, int jumlahOrder)
+{
 
+  if (isFullOrder())
+  {
+    cout << "Orderan sudah penuh" << endl;
+  }
+  else
+  {
+    // newNode->IDorder = generateIDOrder();
+    newNode = new Orderan();
+    // newNode->IDorder = generateIDOrder();
+    newNode->name = namaPemesan;
+    newNode->orderProduk = namaProduk;
+    newNode->jmlhOrderProduk = jumlahOrder;
+    newNode->next = nullptr;
+    if (isEmptyOrder())
+    {
+      head = newNode;
+      tail = newNode;
+      cout << "berhasil membuat head" << endl;
+    }
+    else
+    {
+      tail->next = newNode;
+      tail = newNode;
+      cout << "berhasil menambah tail" << endl;
+    }
+  }
+}
+void showOrderan()
+{
+  cur = head;
+  if (cur == nullptr)
+  {
+    cout << "Orderan masih kosong" << endl;
+  }
+  else
+  {
+    cout << "Daftar Orderan" << endl;
+    while (cur != nullptr)
+    {
+      cout << cur->name << " " << cur->orderProduk << " " << cur->jmlhOrderProduk << endl;
+      cur = cur->next;
+    }
+  }
+}
 
 int main()
 {
-
+  string kategori;
   int pilihMenu;
   do
   {
@@ -222,6 +313,8 @@ int main()
     cout << "2. Edit Data Barang" << endl;
     cout << "3. Delete data" << endl;
     cout << "4. Display Data" << endl;
+    cout << "5. Input Orderan" << endl;
+    cout << "6. Show Orderan" << endl;
     cout << "0. exit" << endl;
     cout << ">";
     cin >> pilihMenu;
@@ -253,6 +346,7 @@ int main()
       cin >> id2;
       break;
     case 4:
+    {
       int pilih;
       listCategories();
       cout << ">";
@@ -269,6 +363,34 @@ int main()
       {
         showCategoryItems("Kids");
       }
+      break;
+    }
+    case 5:
+    {
+      if (isFullOrder())
+      {
+        cout << "Orderan sudah penuh" << endl;
+        break;
+      }
+      else
+      {
+        string namaPemesan;
+        string orderProduk;
+        int jumlah;
+        cout << "nama pemesan : ";
+        cin >> namaPemesan;
+        cout << "nama barang : ";
+        cin >> orderProduk;
+        cout << "kategori : ";
+        cin >> kategori;
+        cout << "Jumlah : ";
+        cin >> jumlah;
+        insertOrderan(namaPemesan, orderProduk, jumlah);
+        break;
+      }
+    }
+    case 6:
+      showOrderan();
       break;
     default:
       cout << "Pilih menu yang tersedia." << endl;
