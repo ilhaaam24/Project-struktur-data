@@ -220,6 +220,7 @@ void editDataBarang(int id)
     cout << "Barang dengan ID " << id << " tidak ditemukan." << endl;
   }
 }
+
 int countOrder()
 {
   if (head == nullptr)
@@ -238,14 +239,7 @@ int countOrder()
     return count;
   }
 }
-bool isFullOrder()
-{
-  if (countOrder() == maksimalOrder)
-  {
-    return true;
-  }
-  return false;
-}
+
 bool isEmptyOrder()
 {
   if (countOrder() == 0)
@@ -257,32 +251,24 @@ bool isEmptyOrder()
 // implementasi queue
 void insertOrderan(string namaPemesan, string namaProduk, int jumlahOrder)
 {
-
-  if (isFullOrder())
+  // newNode->IDorder = generateIDOrder();
+  newNode = new Orderan();
+  // newNode->IDorder = generateIDOrder();
+  newNode->name = namaPemesan;
+  newNode->orderProduk = namaProduk;
+  newNode->jmlhOrderProduk = jumlahOrder;
+  newNode->next = nullptr;
+  if (isEmptyOrder())
   {
-    cout << "Orderan sudah penuh" << endl;
+    head = newNode;
+    tail = newNode;
+    cout << "berhasil membuat head" << endl;
   }
   else
   {
-    // newNode->IDorder = generateIDOrder();
-    newNode = new Orderan();
-    // newNode->IDorder = generateIDOrder();
-    newNode->name = namaPemesan;
-    newNode->orderProduk = namaProduk;
-    newNode->jmlhOrderProduk = jumlahOrder;
-    newNode->next = nullptr;
-    if (isEmptyOrder())
-    {
-      head = newNode;
-      tail = newNode;
-      cout << "berhasil membuat head" << endl;
-    }
-    else
-    {
-      tail->next = newNode;
-      tail = newNode;
-      cout << "berhasil menambah tail" << endl;
-    }
+    tail->next = newNode;
+    tail = newNode;
+    cout << "berhasil menambah tail" << endl;
   }
 }
 void showOrderan()
@@ -367,28 +353,21 @@ int main()
     }
     case 5:
     {
-      if (isFullOrder())
-      {
-        cout << "Orderan sudah penuh" << endl;
-        break;
-      }
-      else
-      {
-        string namaPemesan;
-        string orderProduk;
-        int jumlah;
-        cout << "nama pemesan : ";
-        cin >> namaPemesan;
-        cout << "nama barang : ";
-        cin >> orderProduk;
-        cout << "kategori : ";
-        cin >> kategori;
-        cout << "Jumlah : ";
-        cin >> jumlah;
-        insertOrderan(namaPemesan, orderProduk, jumlah);
-        break;
-      }
+      string namaPemesan;
+      string orderProduk;
+      int jumlah;
+      cout << "nama pemesan : ";
+      cin >> namaPemesan;
+      cout << "nama barang : ";
+      cin >> orderProduk;
+      cout << "kategori : ";
+      cin >> kategori;
+      cout << "Jumlah : ";
+      cin >> jumlah;
+      insertOrderan(namaPemesan, orderProduk, jumlah);
+      break;
     }
+
     case 6:
       showOrderan();
       break;
