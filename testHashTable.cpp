@@ -104,6 +104,22 @@ void insertHash(string key, Orderan *value, HashNode **hashTable)
   }
 }
 
+void searchOrderan(string key, HashNode **hashTable)
+{
+  int index = convertStrToInt(key);
+  HashNode *temp = hashTable[index];
+  while (temp != nullptr)
+  {
+    if (temp->key == key)
+    {
+      cout << temp->key << " " << temp->value->orderProduk << " " << temp->value->jmlhOrderProduk << endl;
+      return;
+    }
+    temp = temp->next;
+  }
+  cout << "Produk tidak ditemukan" << endl;
+}
+
 TreeNode *createNode(int id, string name, int stock)
 {
   TreeNode *newNode = new TreeNode();
@@ -342,7 +358,7 @@ int main()
     cout << "4. Display Data" << endl;
     cout << "5. Input Orderan" << endl;
     cout << "6. Show Orderan" << endl;
-    cout << "7. Convert string to int" << endl;
+    cout << "7. Cari pemesan" << endl;
     cout << "8. Show Hash Table" << endl;
     cout << "0. exit" << endl;
     cout << ">";
@@ -413,8 +429,10 @@ int main()
       break;
     case 7:
     {
-      int result = convertStrToInt("Arif");
-      cout << result << endl;
+      cout << "Masukan nama pemesan: ";
+      string namaPemesan;
+      cin >> namaPemesan;
+      searchOrderan(namaPemesan, hashTable);
       break;
     }
     case 8:
