@@ -1,3 +1,32 @@
+// MENU ADMIN
+//     -Tambah kategori✅
+//     -Tambah Item✅
+//     -Edit Item by ID > searching
+//     -Delete Item by ID
+//     -Tampilkan Data per kategori 
+//     - Urutkan Data dari termurah or termahal > sorting
+//     -Proses Orderan > queue
+//     -Sinkronkan stok ketika orderan masuk dan update stok 
+//             -Riwayat ubah data or stok masuk ke dalam stack > stack
+
+// MENU USER
+//     -Tampilkan Data Item per kategori > sorting
+//           - Order berdasarkan nama barang  > queue
+//           - Dapat menampilkan riwayat orderan
+
+// SISTEM LOGIN USER
+
+//     -daftar
+//     -Login
+//     - Username & password > Hastable
+    
+
+
+
+
+
+
+
 #include <iostream>
 #include <string>
 using namespace std;
@@ -23,17 +52,27 @@ struct CategoryNode
   TreeNode *itemsTree;
   CategoryNode *next;
 };
+
+struct HashNode
+{
+  string key;
+  Item *value;
+  HashNode *next;
+};
+
 const int hashTableSize = 10;
 CategoryNode *categories = nullptr;
 
-int generateID(string name, string category)
+int generateIDItem(string name, string category)
 {
   int id = 0;
   int digit1 = toupper(name[0]) - 'A' + 1;
   int digit2 = toupper(name[name.length() - 1]) - 'A' + 1;
-  id = (digit1 + digit2) % 10 * 1000;
   int digit3 = category.length();
-  id = id + digit3 * 10;
+  digit1 *= 1000;
+  digit2 *= 100;
+  digit3 *= 10;
+  id = digit1 + digit2 + digit3;
   return id;
 }
 
@@ -88,21 +127,36 @@ CategoryNode *findCategory(string category)
 }
 CategoryNode *addCategory(string category)
 {
-  CategoryNode *newCategory = new CategoryNode();
-  newCategory->name = category;
-  newCategory->itemsTree = nullptr;
-  newCategory->next = categories;
-  categories = newCategory;
-  return newCategory;
+
+  if (findCategory(category) != nullptr)
+  {
+    cout << "Kategori '" << category << " sudah ada." << endl;
+    return nullptr;
+  }
+  else
+  {
+    CategoryNode *newCategory = new CategoryNode();
+    newCategory->name = category;
+    newCategory->itemsTree = nullptr;
+    newCategory->next = categories;
+    categories = newCategory;
+
+    cout << "Kategori " << category << " berhasil ditambahkan :)" << endl;
+
+    return newCategory;
+  }
 }
 
 void showCategoryItems(string category)
 {
 
   CategoryNode *categoryNode = findCategory(category);
+
   if (categoryNode != nullptr)
   {
-    cout << "Items in category '" << category << "':" << endl;
+    cout << "-------------------------------" << endl;
+    cout << "\t" << category << endl;
+    cout << "-------------------------------" << endl;
     showTree(categoryNode->itemsTree);
   }
   else
@@ -110,15 +164,12 @@ void showCategoryItems(string category)
     cout << "Category '" << category << "' not found." << endl;
   }
 }
-string showCategories()
+void showCategories()
 {
-  string category;
   CategoryNode *current = categories;
   if (current == nullptr)
   {
     cout << "No categories found." << endl;
-    cout << "Masukan kategori baru : ";
-    cin >> category;
   }
   else
   {
@@ -128,10 +179,7 @@ string showCategories()
       cout << i++ << ". " << current->name << endl;
       current = current->next;
     }
-    cout << " Piliih Kategori :";
-    cin >> category;
   }
-  return category;
 }
 
 void insertItem(int id, string name, int stock, double price, string category)
@@ -147,17 +195,112 @@ void insertItem(int id, string name, int stock, double price, string category)
   }
   insertTree(&(categoryNode->itemsTree), id, name, stock, price);
 }
+void editItem(int id)
+{
+  CategoryNode *currentCategory = categories;
+  bool itemFound = false;
+
+  while (currentCategory != nullptr && !itemFound)
+  {
+    TreeNode *currentItem = currentCategory->itemsTree;
+    while (currentItem != nullptr)
+    {
+      if (currentItem->item.id == id)
+      {
+        itemFound = true;
+        bool keepEditing = true;
+
+        while (keepEditing)
+        {
+          cout << "Pilih data yang ingin diubah : " << endl;
+          cout << "1. Nama" << endl;
+          cout << "2. Stock" << endl;
+          cout << "3. Harga" << endl;
+          cout << "0. Selesai" << endl;
+          cout << ">";
+          int pilih;
+          cin >> pilih;
+
+          if (pilih == 0)
+          {
+            keepEditing = false;
+          }
+          else if (pilih == 1)
+          {
+            string name;
+            cout << "Masukkan Nama : ";
+            cin.ignore();
+            getline(cin, name);
+            currentItem->item.name = name;
+          }
+          else if (pilih == 2)
+          {
+            int stock;
+            cout << "Masukkan Stock : ";
+            cin >> stock;
+            currentItem->item.stock = stock;
+          }
+          else if (pilih == 3)
+          {
+            double price;
+            cout << "Masukkan Harga : ";
+            cin >> price;
+            currentItem->item.price = price;
+          }
+          else
+          {
+            cout << "Pilihan tidak valid!" << endl;
+            continue;
+          }
+
+          cout << "Data berhasil diubah!" << endl;
+          currentItem->item.id = generateIDItem(currentItem->item.name, currentCategory->name);
+          cout << "ID: " << currentItem->item.id << ", Name: " << currentItem->item.name << ", Stock: " << currentItem->item.stock << ", Price: " << currentItem->item.price << endl;
+
+          if (keepEditing)
+          {
+            cout << "Apakah ingin mengubah data lagi? (y/n): ";
+            char choice;
+            cin >> choice;
+            if (choice != 'y' && choice != 'Y')
+            {
+              keepEditing = false;
+            }
+          }
+        }
+        break;
+      }
+      currentItem = currentItem->right;
+    }
+    currentCategory = currentCategory->next;
+  }
+
+  if (!itemFound)
+  {
+    cout << "Item dengan ID " << id << " tidak ditemukan." << endl;
+  }
+}
+
+void deleteItem(int id){
+  TreeNode *current = categories->itemsTree;
+  while (current != nullptr){
+    if (current->item.id == id){
+      cout << "ID: " << current->item.id << ", Name: " << current->item.name << ", Stock: " << current->item.stock << ", Price: " << current->item.price << endl;
+    }
+    current = current->right;
+  }
+}
 
 int main()
 {
-  // HashNode *hashTable[hashTableSize] = {nullptr}; // Initialize hash table
+  HashNode *hashTable[hashTableSize] = {nullptr}; // Initialize hash table
 
   int pilihMenuUtama;
   do
   {
-    cout << "-------------------------" << endl;
-    cout << "Selamat datang di Aplikasi" << endl;
-    cout << "-------------------------" << endl;
+    cout << "--------------------------------" << endl;
+    cout << "   Selamat datang di Aplikasi   " << endl;
+    cout << "--------------------------------" << endl;
     cout << "1. Masuk Sebagai Admin" << endl;
     cout << "2. Masuk Sebagai User" << endl;
     cout << "0. Exit" << endl;
@@ -191,7 +334,6 @@ int main()
           cout << "Masukkan nama kategori: ";
           cin >> namaKategori;
           addCategory(namaKategori);
-          cout << "Kategori " << namaKategori << " berhasil ditambahkan." << endl;
           break;
         }
         case 2:
@@ -199,7 +341,6 @@ int main()
           string namaItem, kategoriItem;
           int stokItem;
           double hargaItem;
-          kategoriItem = showCategories();
           cout << "Masukkan nama item: ";
           cin.ignore();
           getline(cin, namaItem);
@@ -207,7 +348,20 @@ int main()
           cin >> stokItem;
           cout << "Masukkan harga item: ";
           cin >> hargaItem;
-          int idItem = generateID(namaItem, kategoriItem);
+
+          if (categories == nullptr)
+          {
+            cout << "Tidak ada kategori yang tersedia" << endl;
+            cout << "Mohon tambahkan kategori baru : ";
+            cin >> kategoriItem;
+          }
+          else
+          {
+            showCategories();
+            cout << "Masukkan kategori item: ";
+            cin >> kategoriItem;
+          }
+          int idItem = generateIDItem(namaItem, kategoriItem);
           insertItem(idItem, namaItem, stokItem, hargaItem, kategoriItem);
           cout << "Item berhasil ditambahkan." << endl;
           break;
@@ -217,7 +371,7 @@ int main()
           int idItem;
           cout << "Masukkan ID item yang ingin diedit: ";
           cin >> idItem;
-          // editDataBarang(idItem);
+          editItem(idItem);
           break;
         }
         case 4:
@@ -225,8 +379,19 @@ int main()
           break;
         case 5:
         {
-          string category = showCategories();
-          showCategoryItems(category);
+          if (categories == nullptr)
+          {
+            cout << "Tidak ada kategori yang tersedia" << endl;
+            break;
+          }
+          else
+          {
+            showCategories();
+            string category;
+            cout << "Masukkan kategori: ";
+            cin >> category;
+            showCategoryItems(category);
+          }
           break;
         }
         case 6:
