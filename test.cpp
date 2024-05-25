@@ -15,6 +15,7 @@ struct Item
   int id;
   string name;
   int stock;
+  long price;
 };
 
 struct TreeNode
@@ -36,13 +37,21 @@ struct Orderan
   int jmlhOrderProduk;
   string name;
   string orderProduk;
+  long totalHarga;
   Orderan *next;
 };
 
+struct HashNode
+{
+  string key;
+  Orderan *value;
+
+  HashNode *next;
+};
+
 Orderan *head, *tail, *cur, *newNode, *del;
-
 int maksimalOrder = 2;
-
+const int hashTableSize = 15;
 CategoryNode *categories = nullptr;
 
 int generateID(string name, string category)
@@ -79,13 +88,16 @@ int generateID(string name, string category)
 
   return id;
 }
+void hasshh(HashNode *data){
+  }
 
-TreeNode *createNode(int id, string name, int stock)
+TreeNode *createNode(int id, string name, int stock, long price)
 {
   TreeNode *newNode = new TreeNode();
   newNode->item.id = id;
   newNode->item.name = name;
   newNode->item.stock = stock;
+  newNode->item.price = price;
   newNode->left = newNode->right = nullptr;
   return newNode;
 }
@@ -251,6 +263,19 @@ bool isEmptyOrder()
 // implementasi queue
 void insertOrderan(string namaPemesan, string namaProduk, int jumlahOrder)
 {
+
+  find = findCategory(namaProduk);
+  if (find == nullptr)
+  {
+    cout << "Produk tidak ditemukan" << endl;
+    return;
+  }
+  if (find->itemsTree == nullptr)
+  {
+    cout << "Produk tidak ditemukan" << endl;
+    return;
+  }
+
   // newNode->IDorder = generateIDOrder();
   newNode = new Orderan();
   // newNode->IDorder = generateIDOrder();
@@ -270,6 +295,7 @@ void insertOrderan(string namaPemesan, string namaProduk, int jumlahOrder)
     tail = newNode;
     cout << "berhasil menambah tail" << endl;
   }
+  
 }
 void showOrderan()
 {
