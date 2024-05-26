@@ -150,40 +150,28 @@ TreeNode *insertItem(TreeNode *root, Item newItem)
   return root;
 }
 
-TreeNode *findCheapestItem(TreeNode *root)
-{
-  TreeNode *current = root;
-  while (current != nullptr && current->left != nullptr)
-  {
-    current = current->left;
-  }
-  return current;
-}
+void displayRecommendationGraph(CategoryNode *categories) {
+    CategoryNode *currentCategory = categories;
 
-void displayCheapestItems(CategoryNode *categories)
-{
-  CategoryNode *currentCategory = categories;
+    while (currentCategory != nullptr) {
+        cout << "Recommendations for Category: " << currentCategory->name << "\n";
+        
+        if (currentCategory->itemsTree != nullptr) {
+            TreeNode *currentItem = currentCategory->itemsTree;
+            cout << "Top 2 Recommended Items:\n";
+            int count = 0;
+            while (currentItem != nullptr && count < 2) {
+                cout << "- " << currentItem->item.name << " (ID: " << currentItem->item.id << ")\n";
+                currentItem = currentItem->right;
+                count++;
+            }
+        } else {
+            cout << "No items available in this category.\n";
+        }
 
-  cout << "~~~~~~~~~~~~~~ Barang Termurah ~~~~~~~~~~~~~\n";
-  cout << "===========================================\n";
-  cout << "Barang\tKategori\tHarga\n";
-  cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n";
-
-  while (currentCategory != nullptr)
-  {
-    TreeNode *cheapestItem = findCheapestItem(currentCategory->itemsTree);
-
-    if (cheapestItem != nullptr)
-    {
-      cout << currentCategory->name << "\t" << cheapestItem->item.name << "\t" << cheapestItem->item.price << "\n";
+        cout << "-------------------------\n";
+        currentCategory = currentCategory->next;
     }
-    else
-    {
-      cout << currentCategory->name << "\tTidak ada barang\tN/A\n";
-    }
-
-    currentCategory = currentCategory->next;
-  }
 }
 
 TreeNode *deleteMin(TreeNode *node)
@@ -821,7 +809,7 @@ int main()
               cin >> confirm;
               if (confirm == "1")
               {
-                orderQueue.front->order.status = true;
+                
               }
               else if (confirm == "2")
               {
@@ -942,11 +930,11 @@ int main()
               case 3:
               {
 
-                cout << "Masukkan nama item yang ingin dimasukkan ke keranjang: ";
+                cout << "Masukkan nama item : ";
                 string namaItem, category;
                 cin.ignore();
                 getline(cin, namaItem);
-                cout << "Masukan kategori: ";
+                cout << "Masukan kategori : ";
                 cin >> category;
 
                 CategoryNode *categories = findCategory(category);
@@ -1070,20 +1058,23 @@ int main()
         }
         case 5:
         {
-          displayCheapestItems(categories);
+          // displayRecommendationGraph(categories);
           break;
         }
         case 6:
         {
-          string namaPemesan, namaProduk;
+          string namaPemesan, namaProduk, category;
           int jumlahOrder;
           cout << "Masukkan nama pemesan: ";
           cin >> namaPemesan;
           cout << "Masukkan nama produk: ";
-          cin >> namaProduk;
+          cin.ignore();
+          getline(cin, namaProduk);
+          cout << "Masukkan kategori: ";
+          cin >> category;
           cout << "Masukkan jumlah order: ";
           cin >> jumlahOrder;
-
+          CategoryNode *categories = findCategory(category);
           TreeNode *foundItem = searchItemByName(categories->itemsTree, namaProduk);
           updateStock(foundItem->item.stock, jumlahOrder);
           if (foundItem != nullptr)
