@@ -357,16 +357,16 @@ void pushCart(int id) {
     newCartNode->item = itemNode->item;
     newCartNode->next = top;
     top = newCartNode;
-    cout << "Item '" << newCartNode->item.name << "' dengan ID " << id << " berhasil dimasukkan ke keranjang." << endl;
+    cout << "Item '" << newCartNode->item.name << "' dengan ID " << id << " berhasil dimasukkan ke keranjang.\n" << endl;
   } else {
   }
 
-  cout << "Item dengan ID " << id << " tidak ditemukan." << endl;
+  cout << "Item dengan ID " << id << " tidak ditemukan.\n" << endl;
 }
 
 void popCart() {
   if (top == nullptr) {
-    cout << "Keranjang kosong" << endl;
+    cout << "\nKeranjang kosong !!!\n" << endl;
   } else {
     CartNode *temp = top;
     cout << "Item '" << temp->item.name << "' dengan ID " << temp->item.id << " berhasil dihapus dari keranjang." << endl;
@@ -378,7 +378,7 @@ void popCart() {
 
 void displayCart() {
   if (top == nullptr) {
-    cout << "Keranjang kosong" << endl;
+    cout << "\nKeranjang kosong !!!\n" << endl;
   } else {
     CartNode *current;
     while (current != nullptr) {
@@ -404,12 +404,13 @@ int main() {
 
   int pilihMenuUtama;
   do {
-    cout << "--------------------------------" << endl;
-    cout << "   Selamat datang di Aplikasi   " << endl;
-    cout << "--------------------------------" << endl;
-    cout << "1. Masuk Sebagai Admin" << endl;
-    cout << "2. Masuk Sebagai User" << endl;
-    cout << "0. Exit" << endl;
+    cout << "---------------------------------" << endl;
+    cout << "|  Selamat datang di Aplikasi   |" << endl;
+    cout << "---------------------------------" << endl;
+    cout << "|1. Masuk Sebagai Admin         |" << endl;
+    cout << "|2. Masuk Sebagai User          |" << endl;
+    cout << "|0. Exit                        |" << endl;
+    cout << "---------------------------------" << endl;
     cout << ">";
     cin >> pilihMenuUtama;
     system("cls");
@@ -418,17 +419,18 @@ int main() {
     case 1: {
       int pilihMenuAdmin;
       do {
-        cout << "-------------------" << endl;
-        cout << "    MENU ADMIN     " << endl;
-        cout << "-------------------" << endl;
-        cout << "1. Tambah Kategori" << endl;
-        cout << "2. Tambah Item" << endl;
-        cout << "3. Edit Item" << endl;
-        cout << "4. Hapus Item" << endl;
-        cout << "5. Tampilkan Data Item" << endl;
-        cout << "6. Proses Orderan" << endl;
-        cout << "7. Tampilkan Semua Orderan" << endl;
-        cout << "0. Exit" << endl;
+        cout << "------------------------------" << endl;
+        cout << "|         MENU ADMIN         |" << endl;
+        cout << "------------------------------" << endl;
+        cout << "|1. Tambah Kategori          |" << endl;
+        cout << "|2. Tambah Item              |" << endl;
+        cout << "|3. Edit Item                |" << endl;
+        cout << "|4. Hapus Item               |" << endl;
+        cout << "|5. Tampilkan Data Item      |" << endl;
+        cout << "|6. Proses Orderan           |" << endl;
+        cout << "|7. Tampilkan Semua Orderan  |" << endl;
+        cout << "|0. Exit                     |" << endl;
+        cout << "------------------------------" << endl;
         cout << ">";
         cin >> pilihMenuAdmin;
         system("cls");
@@ -521,15 +523,16 @@ int main() {
     {
       int pilihMenuUser;
       do {
-        cout << "-------------------" << endl;
-        cout << "    MENU USER     " << endl;
-        cout << "-------------------" << endl;
-        cout << "1. Tampilkan Item" << endl;
-        cout << "2. Cari Item Berdasarkan Nama" << endl;
-        cout << "3. Buat Orderan" << endl;
-        cout << "4. Tampilkan Orderan Saya" << endl;
-        cout << "5. Tampilkan Keranjang" << endl;
-        cout << "0. Exit" << endl;
+        cout << "---------------------------------" << endl;
+        cout << "|           MENU USER           |" << endl;
+        cout << "---------------------------------" << endl;
+        cout << "|1. Tampilkan Item              |" << endl;
+        cout << "|2. Cari Item Berdasarkan Nama  | " << endl;
+        cout << "|3. Buat Orderan                |" << endl;
+        cout << "|4. Tampilkan Orderan Saya      |" << endl;
+        cout << "|5. Tampilkan Keranjang         |" << endl;
+        cout << "|0. Exit                        |" << endl;
+        cout << "---------------------------------" << endl;
         cout << ">";
         cin >> pilihMenuUser;
         system("cls");
