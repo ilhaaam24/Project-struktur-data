@@ -65,6 +65,32 @@ struct CartNode
   CartNode *next;
 };
 
+struct Order
+{
+  string id;
+  string namaPemesan;
+  string namaProduk;
+  int jumlahOrder;
+  double totalPrice;
+  bool status;
+};
+
+struct QueueNode
+{
+  Order order;
+  QueueNode *next;
+
+  QueueNode(Order newOrder) : order(newOrder), next(nullptr) {}
+};
+
+struct Queue
+{
+  QueueNode *front;
+  QueueNode *rear;
+
+  Queue() : front(nullptr), rear(nullptr) {}
+};
+
 const int hashTableSize = 10;
 CategoryNode *categories = nullptr;
 CartNode *top = nullptr;
@@ -511,84 +537,6 @@ bool updateStock(int stock, int jmlhOrder)
     return false;
   }
 }
-
-void pushCart(Item item)
-{
-  CartNode *newCartNode = new CartNode;
-  newCartNode->item = item;
-  newCartNode->next = top;
-  top = newCartNode;
-  cout << "Item '" << item.name << "' dengan ID " << item.id << " berhasil dimasukkan ke keranjang." << endl;
-}
-
-void popCart()
-{
-  if (top == nullptr)
-  {
-    cout << "Keranjang kosong" << endl;
-  }
-  else
-  {
-    CartNode *temp = top;
-    cout << "Item '" << temp->item.name << "' dengan ID " << temp->item.id << " berhasil dihapus dari keranjang." << endl;
-    top = temp->next;
-
-    delete temp;
-  }
-}
-
-void displayCart()
-{
-  if (top == nullptr)
-  {
-    cout << "Keranjang kosong" << endl;
-  }
-  else
-  {
-    CartNode *current;
-    while (current != nullptr)
-    {
-      current = current->next;
-    }
-    current = top;
-    cout << "ID: " << current->item.id << ", Nama: " << current->item.name << ", Stock: " << current->item.stock << ", Harga: " << current->item.price << endl;
-    cout << "Apakah ingin menghapus item? (y/n): ";
-    char choice;
-
-    cin >> choice;
-    if (choice == 'y' || choice == 'Y')
-    {
-      popCart();
-    }
-  }
-}
-
-struct Order
-{
-  string id;
-  string namaPemesan;
-  string namaProduk;
-  int jumlahOrder;
-  double totalPrice;
-  bool status;
-};
-
-struct QueueNode
-{
-  Order order;
-  QueueNode *next;
-
-  QueueNode(Order newOrder) : order(newOrder), next(nullptr) {}
-};
-
-struct Queue
-{
-  QueueNode *front;
-  QueueNode *rear;
-
-  Queue() : front(nullptr), rear(nullptr) {}
-};
-
 void enqueue(Queue &q, Order newOrder)
 {
   QueueNode *newNode = new QueueNode(newOrder);
@@ -676,6 +624,31 @@ void displayAllQueue(Queue &q)
   }
 }
 
+void pushCart(Item item)
+{
+  CartNode *newCartNode = new CartNode;
+  newCartNode->item = item;
+  newCartNode->next = top;
+  top = newCartNode;
+  cout << "Item '" << item.name << "' dengan ID " << item.id << " berhasil dimasukkan ke keranjang." << endl;
+}
+
+void popCart()
+{
+  if (top == nullptr)
+  {
+    cout << "Keranjang kosong" << endl;
+  }
+  else
+  {
+    CartNode *temp = top;
+    cout << "Item '" << temp->item.name << "' dengan ID " << temp->item.id << " berhasil dihapus dari keranjang." << endl;
+    top = temp->next;
+
+    delete temp;
+  }
+}
+
 void displayNota(Queue &order)
 {
   if (order.front == nullptr)
@@ -700,8 +673,12 @@ int main()
 {
   Queue orderQueue;
   int orderIdCounter = 1;
-  insertItem(generateIDItem("Flannel", "Kemeja"), "Flannel", 2, 100000, "Kemeja");
+  insertItem(generateIDItem("Kemeja Flannel", "Kemeja"), "Kemeja Flannel", 2, 100000, "Kemeja");
+  insertItem(generateIDItem("Kemeja Denim", "Kemeja"), "Kemeja Denim", 2, 100000, "Kemeja");
+  insertItem(generateIDItem("Kemeja Oxford", "Kemeja"), "Kemeja Oxford", 2, 100000, "Kemeja");
   insertItem(generateIDItem("Celana Jeans", "Celana"), "Celana Jeans", 2, 100000, "Celana");
+  insertItem(generateIDItem("Celana Kain", "Celana"), "Celana Kain", 2, 100000, "Celana");
+  insertItem(generateIDItem("Celana Denim", "Celana"), "Celana Denim", 2, 100000, "Celana");
 
   int pilihMenuUtama;
   do
@@ -1019,7 +996,77 @@ int main()
         }
         case 4:
         {
-          displayCart();
+          if (top == nullptr)
+          {
+            cout << "\nKeranjang kosong !!\n"
+                 << endl;
+            break;
+          }
+          else
+          {
+            system("cls");
+            CartNode *current;
+            while (current != nullptr)
+            {
+              current = top;
+              printItemTableHeader();
+              printItemTableRow(current->item.id, current->item.name, current->item.stock, current->item.price);
+              cout << "\n1.Buat Pesanan" << endl;
+              cout << "2.Hapus dari keranjang" << endl;
+              cout << "3.Exit" << endl;
+              cout << ">";
+              int choice;
+              cin >> choice;
+              if (choice == 1)
+              {
+                string namaPemesan, namaProduk, category;
+                int jumlahOrder;
+
+                cout << "Masukkan nama pemesan: ";
+                cin >> namaPemesan;
+                cout << "Masukkan kategori: ";
+                cin >> category;
+                cout << "Masukkan nama produk: ";
+                cin.ignore();
+                getline(cin, namaProduk);
+                cout << "Masukkan jumlah order: ";
+                cin >> jumlahOrder;
+
+                CategoryNode *categories = findCategory(category);
+
+                TreeNode *foundItem = searchItemByName(categories->itemsTree, namaProduk);
+                if (foundItem == nullptr)
+                {
+                  cout << "Produk tidak ditemukan." << endl;
+                }
+                else
+                {
+                  if (updateStock(foundItem->item.stock, jumlahOrder))
+                  {
+                    foundItem->item.stock -= jumlahOrder;
+
+                    int id = generateIDItem(namaProduk, category);
+                    double totalPrice = foundItem->item.price * jumlahOrder;
+                    Order newOrder = {generateIDOrder(category, namaPemesan, foundItem->item.id), namaPemesan, namaProduk, jumlahOrder, totalPrice, false};
+                    enqueue(orderQueue, newOrder);
+
+                    cout << "Order berhasil dibuat!" << endl;
+                  }
+                }
+
+                popCart();
+              }
+              else if (choice == 2)
+              {
+                popCart();
+                break;
+              }else if(choice == 3){
+                break;
+              }
+              current = current->next;
+            }
+          }
+          break;
         }
         case 5:
         {
