@@ -288,37 +288,6 @@ TreeNode *insertItem(TreeNode *root, Item newItem)
 
   return root;
 }
-
-void displayRecommendationGraph(CategoryNode *categories)
-{
-  CategoryNode *currentCategory = categories;
-
-  while (currentCategory != nullptr)
-  {
-    cout << "Recommendations for Category: " << currentCategory->name << "\n";
-
-    if (currentCategory->itemsTree != nullptr)
-    {
-      TreeNode *currentItem = currentCategory->itemsTree;
-      cout << "Top 2 Recommended Items:\n";
-      int count = 0;
-      while (currentItem != nullptr && count < 2)
-      {
-        cout << "- " << currentItem->item.name << " (ID: " << currentItem->item.id << ")\n";
-        currentItem = currentItem->right;
-        count++;
-      }
-    }
-    else
-    {
-      cout << "No items available in this category.\n";
-    }
-
-    cout << "-------------------------\n";
-    currentCategory = currentCategory->next;
-  }
-}
-
 TreeNode *deleteMin(TreeNode *node)
 {
   if (node->left == nullptr)
@@ -644,18 +613,28 @@ TreeNode *findItemByIdInCategories(int id)
 
 TreeNode *searchItemByName(TreeNode *root, const string &namaItem)
 {
-  if (root == nullptr || root->item.name == namaItem)
-  {
-    return root;
-  }
 
-  if (namaItem < root->item.name)
+  CategoryNode *currentCategory = categories;
+  bool itemFound = false;
+
+  while (currentCategory != nullptr)
   {
-    return searchItemByName(root->left, namaItem);
-  }
-  else
-  {
-    return searchItemByName(root->right, namaItem);
+
+    if (root == nullptr || root->item.name == namaItem)
+    {
+      return root;
+    }
+
+    if (namaItem < root->item.name)
+    {
+      return searchItemByName(root->left, namaItem);
+    }
+    else
+    {
+      return searchItemByName(root->right, namaItem);
+    }
+
+    currentCategory = currentCategory->next;
   }
 }
 bool cekStock(int stock, int jmlhOrder)
@@ -684,7 +663,7 @@ void enqueue(Queue &q, Order newOrder)
 
 Order dequeue(Queue &q)
 {
-   if (q.front == nullptr)
+  if (q.front == nullptr)
   {
   }
   QueueNode *temp = q.front;
@@ -853,11 +832,6 @@ void displayGraph()
   {
     cout << products[i].name << " -> ";
     NodeGraph *temp = products[i].head;
-    // while (temp)
-    // {
-    //   cout << products[temp->vertex].name << " ";
-    //   temp = temp->next;
-    // }
   }
   cout << endl;
 }
@@ -866,16 +840,22 @@ int main()
 {
   Queue orderQueue;
   int orderIdCounter = 1;
-  insertItem(generateIDItem("Celana Jeans", "Celana"), "Celana Jeans", 2, 100000, "Celana");
-  insertItem(generateIDItem("Celana Kain", "Celana"), "Celana Kain", 6, 100000, "Celana");
+  insertItem(generateIDItem("Celana Jeans", "Celana"), "Celana Jeans", 8, 200000, "Celana");
+  insertItem(generateIDItem("Celana Kain", "Celana"), "Celana Kain", 9, 100000, "Celana");
+  insertItem(generateIDItem("Celana Cargo", "Celana"), "Celana Cargo", 6, 120000, "Celana");
   insertItem(generateIDItem("Kemeja Flanel", "Kemeja"), "Kemeja Flanel", 5, 100000, "Kemeja");
+  insertItem(generateIDItem("Kemeja Oxford", "Kemeja"), "Kemeja Oxford", 14, 130000, "Kemeja");
+  insertItem(generateIDItem("Kemeja Denim", "Kemeja"), "Kemeja Denim", 7, 150000, "Kemeja");
+  insertItem(generateIDItem("Jaket Kulit", "Jaket"), "Jaket Kulit", 11, 300000, "Jaket");
+  insertItem(generateIDItem("Jaket Parka", "jaket"), "Jaket Parka", 5, 250000, "Jaket");
+  insertItem(generateIDItem("Jaket Varsity", "jaket"), "Jaket Varsity", 8, 270000, "Jaket");
 
   // tambah products
   addProduct("Kemeja Flannel");
   addProduct("Kemeja Oxford");
   addProduct("Kemeja Denim");
   addProduct("Celana Jeans");
-  addProduct("Celana Denim");
+  addProduct("Celana Cargo");
 
   // tambah edges diantara products
   addEdge(0, 1);
@@ -883,6 +863,7 @@ int main()
   addEdge(2, 3);
   addEdge(3, 4);
   addEdge(4, 0);
+  addEdge(4, 5);
 
   int pilihMenuUtama;
   do
@@ -1190,7 +1171,7 @@ int main()
                       else
                       {
                         if (cekStock(foundItem->item.stock, jumlahOrder))
-                        { 
+                        {
                           foundItem->item.stock -= jumlahOrder;
                           int id = generateIDItem(namaProduk, category);
                           double totalPrice = foundItem->item.price * jumlahOrder;
@@ -1239,10 +1220,7 @@ int main()
                 cout << "Masukkan nama item: ";
                 cin.ignore();
                 getline(cin, namaItem);
-                cout << "Masukan kategori : ";
-                cin >> category;
 
-                CategoryNode *categories = findCategory(category);
                 TreeNode *foundItem = searchItemByName(categories->itemsTree, namaItem);
                 if (foundItem != nullptr)
                 {
@@ -1393,6 +1371,7 @@ int main()
     }
     }
   } while (pilihMenuUtama != 0);
-  cout << "\nTerima kasih sudah mengunjungi toko kami :)\n" << endl;
+  cout << "\nTerima kasih sudah mengunjungi toko kami :)\n"
+       << endl;
   return 0;
 }
